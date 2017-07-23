@@ -27,13 +27,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button fb,google,twitter;
+    Button fb, google, twitter;
     ImageView profile;
     TextView detail;
     LoginButton loginButton;
     CallbackManager callbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,15 +42,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-        loginButton= (LoginButton) findViewById(R.id.login_button);
-        fb= (Button) findViewById(R.id.button);
-        google= (Button) findViewById(R.id.button2);
-        twitter= (Button) findViewById(R.id.button3);
-        profile= (ImageView) findViewById(R.id.profileimage);
-        detail= (TextView) findViewById(R.id.textView);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        fb = (Button) findViewById(R.id.button);
+        google = (Button) findViewById(R.id.button2);
+        twitter = (Button) findViewById(R.id.button3);
+        profile = (ImageView) findViewById(R.id.profileimage);
+        detail = (TextView) findViewById(R.id.textView);
 
         callbackManager = CallbackManager.Factory.create();
-        loginButton.setReadPermissions(Arrays.asList("public_profile","email","user_friends"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_friends"));
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -118,25 +119,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LoginManager.getInstance().logOut();
     }
 
-    public void graphRequest(AccessToken token){
-        GraphRequest request = GraphRequest.newMeRequest(token,new GraphRequest.GraphJSONObjectCallback(){
+    public void graphRequest(AccessToken token) {
+        GraphRequest request = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
 
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
 
                 try {
                     String firstName = "NA";
-                    String lastName="NA";
-                    String email="NA";
-                    String birthday="NA";
-                    String gender="NA";
+                    String lastName = "NA";
+                    String email = "NA";
+                    String birthday = "NA";
+                    String gender = "NA";
                     String userId = object.getString("id");
                     URL profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
-                    if(object.has("first_name")) {
-                         firstName = object.getString("first_name");
+                    if (object.has("first_name")) {
+                        firstName = object.getString("first_name");
                     }
-                    if(object.has("last_name")) {
-                         lastName = object.getString("last_name");
+                    if (object.has("last_name")) {
+                        lastName = object.getString("last_name");
                     }
                     if (object.has("email")) {
                         email = object.getString("email");
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         gender = object.getString("gender");
                     }
 
-                    detail.setText("Name :-"+firstName+" "+lastName+"\n"+"Email:-"+email+"\n"+"Birthday:-"+birthday+"\n"+"Gendar:-"+gender);
+                    detail.setText("Name :-" + firstName + " " + lastName + "\n" + "Email:-" + email + "\n" + "Birthday:-" + birthday + "\n" + "Gendar:-" + gender);
                     Picasso.with(MainActivity.this)
                             .load(profilePicture.toString())
                             .error(R.drawable.com_facebook_button_icon)
@@ -169,23 +170,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         request.executeAsync();
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onClick(View view) {
-        int id=view.getId();
+        int id = view.getId();
 
-        if(id==fb.getId()){
+        if (id == fb.getId()) {
 
-            LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile","email","user_friends"));
+            LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile", "email", "user_friends"));
 
-        }else if (id==twitter.getId()){
+        } else if (id == twitter.getId()) {
 
-        }else if (id==google.getId()){
+        } else if (id == google.getId()) {
 
         }
     }
