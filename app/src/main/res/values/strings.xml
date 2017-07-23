@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Social Media Integration</string>
+
+    <string name="facebook_app_id">327204671041192</string>
 </resources>
