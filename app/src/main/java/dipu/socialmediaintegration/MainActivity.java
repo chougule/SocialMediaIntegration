@@ -1,13 +1,16 @@
 package dipu.socialmediaintegration;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,6 +37,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView detail;
     LoginButton loginButton;
     CallbackManager callbackManager;
+    FloatingActionButton main,whatsapp,gmail,message;
+    TextView tv_whatsapp,tv_gmail,tv_message;
+    boolean isopen=false;
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         twitter = (Button) findViewById(R.id.button3);
         profile = (ImageView) findViewById(R.id.profileimage);
         detail = (TextView) findViewById(R.id.textView);
+        tv_whatsapp= (TextView) findViewById(R.id.text_whatsapp);
+        tv_gmail= (TextView) findViewById(R.id.tv_gmail);
+        tv_message= (TextView) findViewById(R.id.tv_message);
+
+        main= (FloatingActionButton) findViewById(R.id.fab_main);
+        whatsapp=(FloatingActionButton) findViewById(R.id.fab_whatsapp);
+        gmail=(FloatingActionButton) findViewById(R.id.fab_gmail);
+        message=(FloatingActionButton) findViewById(R.id.fab_message);
+
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+        main.setOnClickListener(this);
+        whatsapp.setOnClickListener(this);
+        gmail.setOnClickListener(this);
+        message.setOnClickListener(this);
+
+        main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isopen){
+
+                    main.startAnimation(rotate_backward);
+                    whatsapp.startAnimation(fab_close);
+                    gmail.startAnimation(fab_close);
+                    message.startAnimation(fab_close);
+
+                    tv_gmail.startAnimation(fab_close);
+                    tv_message.startAnimation(fab_close);
+                    tv_whatsapp.startAnimation(fab_close);
+
+                    whatsapp.setClickable(false);
+                    gmail.setClickable(false);
+                    message.setClickable(false);
+                    isopen = false;
+                    Log.d("Raj", "close");
+                }else {
+
+                    main.startAnimation(rotate_forward);
+                    whatsapp.startAnimation(fab_open);
+                    gmail.startAnimation(fab_open);
+                    message.startAnimation(fab_open);
+                    tv_whatsapp.startAnimation(fab_open);
+                    tv_message.startAnimation(fab_open);
+                    tv_gmail.startAnimation(fab_open);
+
+                    whatsapp.setClickable(true);
+                    gmail.setClickable(true);
+                    message.setClickable(false);
+                    isopen = true;
+
+                }
+            }
+        });
 
         callbackManager = CallbackManager.Factory.create();
         loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_friends"));
@@ -57,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSuccess(LoginResult loginResult) {
 
                 graphRequest(loginResult.getAccessToken());
+                //GraphRequest request=GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),MainActivity.this);
 
             }
 
@@ -180,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         int id = view.getId();
+
 
         if (id == fb.getId()) {
 
