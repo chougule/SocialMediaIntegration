@@ -1,6 +1,7 @@
 package dipu.socialmediaintegration;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +35,7 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button fb, google, twitter;
+    Button fb, google, twitter,loadimage;
     ImageView profile;
     TextView detail;
     LoginButton loginButton;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fb = (Button) findViewById(R.id.button);
         google = (Button) findViewById(R.id.button2);
         twitter = (Button) findViewById(R.id.button3);
+        loadimage= (Button) findViewById(R.id.button4);
         profile = (ImageView) findViewById(R.id.profileimage);
         detail = (TextView) findViewById(R.id.textView);
         tv_whatsapp= (TextView) findViewById(R.id.text_whatsapp);
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         whatsapp.setOnClickListener(this);
         gmail.setOnClickListener(this);
         message.setOnClickListener(this);
+        loadimage.setOnClickListener(this);
 
         main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,7 +242,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                Picasso.with(MainActivity.this)
+                        .load(resultUri)
+                        .error(R.drawable.com_facebook_button_icon)
+                        .into(profile);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
 
     @Override
@@ -253,6 +273,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         } else if (id == google.getId()) {
 
+        }else if(id==loadimage.getId()){
+
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(this);
         }
     }
 }
